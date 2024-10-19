@@ -1,9 +1,12 @@
-import 'package:chat_app02/widgets/boton_azul.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import 'package:chat_app02/helpers/mostrar_alerta.dart';
+import 'package:chat_app02/services/auth_service.dart';
+import 'package:chat_app02/widgets/boton_azul.dart';
 import 'package:chat_app02/widgets/custom_input.dart';
-import 'package:chat_app02/widgets/logo.dart';
 import 'package:chat_app02/widgets/labels.dart';
+import 'package:chat_app02/widgets/logo.dart';
 
 class RegisterPage extends StatelessWidget {
   const RegisterPage({super.key});
@@ -55,6 +58,8 @@ class __FormState extends State<_Form> {
 
   @override
   Widget build(BuildContext context) {
+    final authService = Provider.of<AuthService>(context);
+
     return Container(
       margin: const EdgeInsets.only(top: 40),
       padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -80,8 +85,29 @@ class __FormState extends State<_Form> {
           ),
           const SizedBox(height: 10),
           BotonAzul(
-            text: 'Ingrese',
-            onPressed: () {},
+            text: 'Crear Cuentas',
+            onPressed: authService.autenticando
+                ? null
+                : () async {
+                    FocusScope.of(context).unfocus(); //Ocultar el teclado
+                    final registroOk = await authService.register(
+                        emailCtrl.text.trim(),
+                        emailCtrl.text.trim(),
+                        passCtrl.text.trim());
+
+                    if (registroOk == true) {
+                      //Navegar a otras pantallas
+                      if (context.mounted) {
+                        Navigator.pushReplacementNamed(context, 'Usuarios');
+                      }
+                    } else {
+                      //Mostrar Alerta
+                      if (context.mounted) {
+                        mostratAlerta(
+                            context, 'Registro incorrecto', registroOk);
+                      }
+                    }
+                  },
           ),
         ],
       ),
