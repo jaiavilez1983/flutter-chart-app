@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:chat_app02/helpers/mostrar_alerta.dart';
 import 'package:chat_app02/services/auth_service.dart';
+import 'package:chat_app02/services/socket_service.dart';
 import 'package:chat_app02/widgets/boton_azul.dart';
 import 'package:chat_app02/widgets/custom_input.dart';
 import 'package:chat_app02/widgets/labels.dart';
@@ -59,6 +60,7 @@ class __FormState extends State<_Form> {
   @override
   Widget build(BuildContext context) {
     final authService = Provider.of<AuthService>(context);
+    final socketService = Provider.of<SocketService>(context);
 
     return Container(
       margin: const EdgeInsets.only(top: 40),
@@ -96,6 +98,7 @@ class __FormState extends State<_Form> {
                         passCtrl.text.trim());
 
                     if (registroOk == true) {
+                      socketService.connect();
                       //Navegar a otras pantallas
                       if (context.mounted) {
                         Navigator.pushReplacementNamed(context, 'Usuarios');
